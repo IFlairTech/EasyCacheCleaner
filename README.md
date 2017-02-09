@@ -27,7 +27,14 @@ Configure composer to search for new repository
 <pre>
 composer config repositories.IFlairTech/EasyCacheCleaner vcs https://github.com/IFlairTech/EasyCacheCleaner
 </pre>
-Then install module as below:
+Then, install module as below:
 <pre>  
   composer require iFlair/easyCacheCleaner
+</pre>
+Then, enable module and install in Magento:
+<pre>
+php bin/magento module:enable IFlair_EasyCacheCleaner
+php bin/magento setup:upgrade
+php bin/magento setup:static-content:deploy
+php bin/magento cache:clean
 </pre>
