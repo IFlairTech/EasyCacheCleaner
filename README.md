@@ -23,6 +23,11 @@ Beneficial for non-technical person to clean the cache in single click.
 <p><u>Easy Cache Cleaner</u> is really convenient extension to clear/clean any kind of built in cache in Magento. The process is simplified with this plugin which is beneficial for non-technical person to clean the cache on their website in single click. Users just have to click on spark icon available on the header and that’s it, all cache is cleared.</p>
 
 <h2>Composer Installation Instructions</h2>
+Configure composer to search for new repository
+<pre>
+composer config repositories.IFlairTech/EasyCacheCleaner vcs https://github.com/IFlairTech/EasyCacheCleaner
+</pre>
+Then install module as below:
 <pre>  
   composer require iFlair/easyCacheCleaner
 </pre>
