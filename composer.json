@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "require": {
         "php": "~5.5.0|~5.6.0|~7.0.0",
-        "magento/magento-composer-installer": "*"
+        "magento/framework": "*"
     },
     "repositories": [
         {
@@ -16,7 +16,7 @@
     "authors": [
         {
             "name": "IFlair",
-            "email": "info@iflair.com",
+            "email": "developer@iflair.com",
             "homepage": "http://iflair.com/",
             "role": "Developer"
         }

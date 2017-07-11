@@ -10,11 +10,47 @@ use \Magento\Framework\Controller\ResultFactory;
 
 class MassRefresh extends \Magento\Backend\Controller\Adminhtml\Cache
 {
+    /**
+     * @var JsonFactory
+     */
+    private $jsonFactory;
 
    /**
-     * @variable Cache type ids
+    * @variable Cache type ids
+    */
+    private $types = ['config',
+    'layout',
+    'block_html',
+    'collections',
+    'reflection',
+    'db_ddl',
+    'eav',
+    'config_integration',
+    'config_integration_api',
+    'full_page',
+    'translate',
+    'config_webservice'];
+
+    /**
+     * @param \Magento\Backend\App\Action\Context $context
+     * @param \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
+     * @param \Magento\Framework\App\Cache\StateInterface $cacheState
+     * @param \Magento\Framework\App\Cache\Frontend\Pool $cacheFrontendPool
+     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param \Magento\Framework\Controller\Result\JsonFactory $jsonFactory
      */
-    protected $_types = array('config','layout','block_html','collections','reflection','db_ddl','eav','config_integration','config_integration_api','full_page','translate','config_webservice');
+    public function __construct(
+        \Magento\Backend\App\Action\Context $context,
+        \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
+        \Magento\Framework\App\Cache\StateInterface $cacheState,
+        \Magento\Framework\App\Cache\Frontend\Pool $cacheFrontendPool,
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
+        \Magento\Framework\Controller\Result\JsonFactory $jsonFactory
+    ) {
+        parent::__construct($context, $cacheTypeList, $cacheState, $cacheFrontendPool, $resultPageFactory);
+        $this->jsonFactory = $jsonFactory;
+    }
+
     /**
      * Mass action for cache refresh
      *
@@ -24,8 +60,11 @@ class MassRefresh extends \Magento\Backend\Controller\Adminhtml\Cache
     public function execute()
     {
         try {
-            $response = array();
-            $types = $this->_types;
+            /** @var \Magento\Framework\Controller\Result\Json $resultJson */
+            $resultJson = $this->jsonFactory->create();
+
+            $response = [];
+            $types = $this->types;
             $updatedTypes = 0;
             if (!is_array($types)) {
                 $types = [];
@@ -50,6 +89,6 @@ class MassRefresh extends \Magento\Backend\Controller\Adminhtml\Cache
             $response['message'] = __('An error occurred while refreshing cache.');
         }
 
-        echo json_encode($response);
+        return $resultJson->setData($response);
     }
 }
