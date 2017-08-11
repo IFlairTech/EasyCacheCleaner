@@ -5,12 +5,12 @@
     "version": "1.0.0",
     "require": {
         "php": "~5.5.0|~5.6.0|~7.0.0",
-        "magento/framework": ">=100.0.0"
+        "magento/framework": "*"
     },
     "repositories": [
         {
-          "type": "vcs",
-          "url": ["git@github.com:IFlairTech/EasyCacheCleaner.git"]
+          "type": "git",
+          "url": "https://github.com/IFlairTech/EasyCacheCleaner.git"
         }
     ],
     "authors": [

@@ -5,19 +5,26 @@
 
 /** @var $block \IFlair\EasyCacheCleaner\Block\Adminhtml\Page\Header */
 ?>
-<?php switch ($block->getShowPart()):
-    case 'logo': ?>
-        <?php $edition = $block->hasEdition() ? 'data-edition="' . $block->escapeHtml($block->getEdition()) . '"' : ''; ?>
-        <?php $logoSrc = ($block->hasLogoImageSrc()) ? $block->escapeHtml($block->getLogoImageSrc()) : 'images/magento-logo.svg' ?>
+<?php
+$default_logo = 'images/magento-logo.svg';
+$ajaxUrlPath = 'ifeasycachecleaner/cache/massRefresh';
+$edition = $block->hasEdition() ? 'data-edition="'.$block->getEdition().'"' : '';
+$logoSrc = ($block->hasLogoImageSrc()) ? $block->getLogoImageSrc() : $default_logo;
+
+switch ($block->getShowPart()) :
+    case 'logo':
+?>
         <a
-            href="<?php /* @escapeNotVerified */ echo $block->getHomeLink() ?>"
-            <?php /* @escapeNotVerified */ echo $edition; ?>
+            href="<?php echo $block->escapeUrl($block->getHomeLink()); ?>"
+            <?php echo $block->escapeHtml($edition); ?>
             class="logo">
-            <img class="logo-img" src="<?php /* @escapeNotVerified */ echo $block->getViewFileUrl($logoSrc) ?>"
+            <img class="logo-img" src="<?php echo $block->escapeUrl($block->getViewFileUrl($logoSrc)); ?>"
             alt="<?php echo $block->escapeHtml(__('Magento Admin Panel')) ?>"/>
         </a>
-    <?php break; ?>
-    <?php case 'user': ?>
+<?php
+        break;
+    case 'user':
+?>
         <div class="ifajax_cache_wraper" style="float:right">
             <a
                 href="javascript:void(0)"
@@ -26,58 +33,67 @@
                 onclick="window.removeCache();"
                 >
                 <span class="ifajax_cache">
-                    <span class="" title="<?php echo $block->escapeHtml(__('Refresh Cache')) ?>"><img src='<?php echo $this->getViewFileUrl('IFlair_EasyCacheCleaner::images/flash.png'); ?>' alt="<?php echo $block->escapeHtml(__('Refresh Cache')) ?>"></span>
+                    <span class="" title="<?php echo $block->escapeHtml(__('Refresh Cache')) ?>">
+                        <?php $flash_img = $block->getViewFileUrl('IFlair_EasyCacheCleaner::images/flash.png'); ?>
+                        <img 
+                        src='<?php echo $block->escapeUrl($flash_img); ?>' 
+                        alt="<?php echo $block->escapeHtml(__('Refresh Cache')) ?>"/>
+                    </span>
                 </span>
             </a>
         </div>
         <div class="admin-user admin__action-dropdown-wrap">
             <a
-                href="<?php /* @escapeNotVerified */ echo $block->getUrl('adminhtml/system_account/index') ?>"
+                href="<?php echo $block->escapeUrl($block->getUrl('adminhtml/system_account/index')); ?>"
                 class="admin__action-dropdown"
                 title="<?php echo $block->escapeHtml(__('My Account')) ?>"
                 data-mage-init='{"dropdown":{}}'
                 data-toggle="dropdown">
                 <span class="admin__action-dropdown-text">
-                    <span class="admin-user-account-text"><?php echo $block->escapeHtml($block->getUser()->getUsername()); ?></span>
+                    <span class="admin-user-account-text">
+                        <?php echo $block->escapeHtml($block->getUser()->getUsername()); ?>
+                    </span>
                 </span>
             </a>
             <ul class="admin__action-dropdown-menu">
-                <?php if ($block->getAuthorization()->isAllowed('Magento_Backend::myaccount')): ?>
+                <?php if ($block->getAuthorization()->isAllowed('Magento_Backend::myaccount')) : ?>
+                <?php $username = $block->escapeHtml($block->getUser()->getUsername()); ?>
                 <li>
                     <a
-                        href="<?php /* @escapeNotVerified */ echo $block->getUrl('adminhtml/system_account/index') ?>"
-                        <?php /* @escapeNotVerified */ echo $block->getUiId('user', 'account', 'settings')?>
+                        href="<?php echo $block->escapeUrl($block->getUrl('adminhtml/system_account/index')); ?>"
+                        <?php echo $block->escapeHtml($block->getUiId('user', 'account', 'settings')); ?>
                         title="<?php echo $block->escapeHtml(__('Account Setting')) ?>">
-                        <?php /* @escapeNotVerified */ echo __('Account Setting') ?> (<span class="admin-user-name"><?php echo $block->escapeHtml($block->getUser()->getUsername()); ?></span>)
+                        <?php echo $block->escapeHtml(__('Account Setting')); ?> 
+                        (<span class="admin-user-name"><?php echo $block->escapeHtml($username); ?></span>)
                     </a>
                 </li>
                 <?php endif; ?>
                 <li>
                     <a
-                        href="<?php /* @escapeNotVerified */ echo $block->getBaseUrl(); ?>"
+                        href="<?php echo $block->escapeUrl($block->getBaseUrl()); ?>"
                         title="<?php echo $block->escapeHtml(__('Customer View')); ?>"
                         target="_blank" class="store-front">
-                        <?php /* @escapeNotVerified */ echo __('Customer View'); ?>
+                        <?php echo $block->escapeHtml(__('Customer View')); ?>
                     </a>
                 </li>
                 <li>
                     <a
-                        href="<?php /* @escapeNotVerified */ echo $block->getLogoutLink() ?>"
+                        href="<?php echo $block->escapeUrl($block->getLogoutLink()); ?>"
                         class="account-signout"
                         title="<?php echo $block->escapeHtml(__('Sign Out')) ?>">
-                        <?php /* @escapeNotVerified */ echo __('Sign Out') ?>
+                        <?php echo $block->escapeHtml(__('Sign Out')); ?>
                     </a>
                 </li>
             </ul>
         </div>
-        <script>
+        <script type="text/javascript">
         require([
             'Magento_Ui/js/modal/alert',
             'prototype'
         ], function(alert){
 
         window.removeCache = function() {
-            ajaxBlockUrl = '<?php echo $block->getUrl('ifeasycachecleaner/cache/massRefresh', ['_current' => true]) ?>';
+            ajaxBlockUrl = '<?php echo $block->escapeUrl($block->getUrl($ajaxUrlPath, ['_current' => true])); ?>';
             new Ajax.Request(ajaxBlockUrl, {
                 parameters: {isAjax: 'true', form_key: FORM_KEY},
                 onSuccess: function(transport) {
@@ -103,8 +119,10 @@
         }
     });
     </script>
-    <?php break; ?>
-    <?php case 'other': ?>
-        <?php echo $block->getChildHtml(); ?>
-    <?php break; ?>
-<?php endswitch; ?>
+    <?php
+        break;
+    case 'other':
+        echo $block->getChildHtml();
+        break;
+endswitch;
+?>
